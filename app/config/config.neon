@@ -1,0 +1,77 @@
+extensions:
+	pd.monitoring: Pd\InternalSandbox\DI\Extension
+	dbal: Nextras\Dbal\Bridges\NetteDI\DbalExtension
+	orm: Nextras\Orm\Bridges\NetteDI\OrmExtension
+	migrations: Nextras\Migrations\Bridges\NetteDI\MigrationsExtension
+	console: Kdyby\Console\DI\ConsoleExtension
+	github: Kdyby\Github\DI\GithubExtension
+	monitoring.monolog: Pd\InternalSandbox\Monolog\DI\Extension
+	nextras.form: Nextras\Forms\Bridges\NetteDI\FormsExtension
+
+
+orm:
+	model: Pd\InternalSandbox\Orm\Orm
+
+
+dbal:
+	driver: mysqli
+
+
+migrations:
+	dir: %appDir%/../migrations
+	driver: mysql
+	dbal: nextras
+
+
+github:
+	permissions:
+		- user:email
+
+
+monitoring.monolog:
+	allowedTypes:
+		 - Pd\InternalSandbox\DashBoard\Presenters\BasePresenter
+
+
+monolog:
+	name: "internalSandbox"
+	handlers:
+		- Pd\InternalSandbox\Monolog\Handlers\DayFileHandler("internalSandbox", %logDir%)
+
+
+parameters:
+	binDir: %appDir%/bin
+	logDir: %appDir%/../log
+
+
+application:
+	errorPresenter: Error
+	scanDirs: off
+	mapping:
+		*: Pd\InternalSandbox\*\Presenters\*Presenter
+
+
+services:
+	routerFactory:
+		class: Pd\InternalSandbox\Router\RouterFactory
+		arguments:
+			- %wwwDir%
+
+	router: @routerFactory::createRouter
+
+	-
+		implement: Pd\InternalSandbox\DashBoard\Controls\Logout\IFactory
+
+	-
+		class: Pd\InternalSandbox\DashBoard\Forms\Factory
+
+	-
+		class: Pd\InternalSandbox\User\AclFactory
+
+	-
+		factory: @Pd\InternalSandbox\User\AclFactory::create
+
+	-
+		class: Pd\InternalSandbox\DashBoard\Presenters\LoginPresenter
+		arguments:
+			administratorTeamId: %administratorTeamId%

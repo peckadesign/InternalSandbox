@@ -1,0 +1,20 @@
+github:
+    appId: ""
+    appSecret: ""
+
+
+dbal:
+	driver: mysqli
+	host: localhost
+	user: root
+	password: vagrant
+	dbname: vagrant
+	connectionTz: '+02:00'
+
+
+console:
+    url: http://internalsandbox.v.peckadesign.com
+
+
+parameters:
+	administratorTeamId: # číslo skupiny s administrátory
